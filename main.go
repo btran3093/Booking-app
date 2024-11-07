@@ -9,6 +9,7 @@ func main() {
 	conferenceName := "Go Conference"
 	const conferenceTickets uint = 50
 	var remainingTickets uint = 50
+	var bookings []string
 
 	fmt.Printf("conferenceTickets: is %T, remainingTickets is %T, conferenceName is %T\n", conferenceTickets, remainingTickets, conferenceName)
 
@@ -16,8 +17,7 @@ func main() {
 	fmt.Printf("We have total of : %v tickets and remaining tickets are: %v\n", conferenceTickets, remainingTickets)
 	fmt.Println("Get your tickets here to attend")
 
-	for {
-		var bookings []string
+	for remainingTickets > 0 && len(bookings) < 50 {
 
 		var firstName string
 		var lastName string
@@ -37,7 +37,11 @@ func main() {
 		fmt.Println("How many tickets you want to book?")
 		fmt.Scan(&userTickets)
 
-		if userTickets <= remainingTickets {
+		isValidName := len(firstName) >= 2 && len(lastName) >= 2
+		isValidEmail := strings.Contains(userEmail, "@")
+		isValidTicketNumber := userTickets > 0 && userTickets <= remainingTickets
+
+		if isValidName && isValidEmail && isValidTicketNumber {
 			remainingTickets = remainingTickets - userTickets // update remaining tickets
 			bookings = append(bookings, firstName+" "+lastName)
 
@@ -56,9 +60,11 @@ func main() {
 				// End program
 				fmt.Println("Our Conference is booked out. Come back next year")
 				break
+			} else {
+				fmt.Printf("Sorry we only have %v tickets remaining, so you can't book %v tickets\n", remainingTickets, userTickets)
 			}
 		} else {
-			fmt.Printf("Sorry we only have %v tickets remaining, so you can't book %v tickets\n", remainingTickets, userTickets)
+			fmt.Println("Your user input is invalid. Please try again")
 		}
 	}
 }
