@@ -15,25 +15,22 @@ var bookings = []string{}
 func main() {
 
 	greetUsers()
-	for remainingTickets > 0 && len(bookings) < 50 {
+	for {
 
-		// ask user for their name
 		firstName, lastName, userEmail, userTickets := getUserInput()
 		isValidName, isValidEmail, isValidTicketNumber := validateUserInput(firstName, lastName, userEmail, userTickets)
 
 		if isValidName && isValidEmail && isValidTicketNumber {
 
-			bookTicket(userTickets, bookings, firstName, lastName, userEmail)
+			bookTicket(userTickets, firstName, lastName, userEmail)
 
 			firstNames := getFirstNames()
-			fmt.Println("Bookings so far: ", firstNames)
+			fmt.Printf("Bookings so far: %v\n", firstNames)
 
 			if remainingTickets == 0 {
 				// End program
 				fmt.Println("Our Conference is booked out. Come back next year")
 				break
-			} else {
-				fmt.Printf("Sorry we only have %v tickets remaining, so you can't book %v tickets\n", remainingTickets, userTickets)
 			}
 		} else {
 			if !isValidName {
@@ -57,23 +54,6 @@ func greetUsers() {
 
 }
 
-func getFirstNames() []string {
-	firstNames := []string{}
-	for _, booking := range bookings {
-		var names = strings.Fields(booking)
-		firstNames = append(firstNames, names[0])
-
-	}
-	return firstNames
-}
-
-func validateUserInput(firstName string, lastName string, userEmail string, userTickets uint) (bool, bool, bool) {
-	isValidName := len(firstName) >= 2 && len(lastName) >= 2
-	isValidEmail := strings.Contains(userEmail, "@")
-	isValidTicketNumber := userTickets > 0 && userTickets <= remainingTickets
-	return isValidName, isValidEmail, isValidTicketNumber
-}
-
 func getUserInput() (string, string, string, uint) {
 	var firstName string
 	var lastName string
@@ -95,7 +75,24 @@ func getUserInput() (string, string, string, uint) {
 	return firstName, lastName, userEmail, userTickets
 }
 
-func bookTicket(userTickets uint, bookings []string, firstName string, lastName string, userEmail string) {
+func getFirstNames() []string {
+	firstNames := []string{}
+	for _, booking := range bookings {
+		var names = strings.Fields(booking)
+		firstNames = append(firstNames, names[0])
+
+	}
+	return firstNames
+}
+
+func validateUserInput(firstName string, lastName string, userEmail string, userTickets uint) (bool, bool, bool) {
+	isValidName := len(firstName) >= 2 && len(lastName) >= 2
+	isValidEmail := strings.Contains(userEmail, "@")
+	isValidTicketNumber := userTickets > 0 && userTickets <= remainingTickets
+	return isValidName, isValidEmail, isValidTicketNumber
+}
+
+func bookTicket(userTickets uint, firstName string, lastName string, userEmail string) {
 	remainingTickets = remainingTickets - userTickets // update remaining tickets
 	bookings = append(bookings, firstName+" "+lastName)
 
