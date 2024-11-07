@@ -7,54 +7,23 @@ import (
 
 func main() {
 	conferenceName := "Go Conference"
-	const conferenceTickets uint = 50
+	const conferenceTickets int = 50
 	var remainingTickets uint = 50
-	var bookings []string
+	bookings := []string{}
+
+	greetUsers(conferenceName, conferenceTickets, remainingTickets)
 
 	fmt.Printf("conferenceTickets: is %T, remainingTickets is %T, conferenceName is %T\n", conferenceTickets, remainingTickets, conferenceName)
 
-	fmt.Printf("Welcome to %v booking application\n", conferenceName)
-	fmt.Printf("We have total of : %v tickets and remaining tickets are: %v\n", conferenceTickets, remainingTickets)
-	fmt.Println("Get your tickets here to attend")
-
 	for remainingTickets > 0 && len(bookings) < 50 {
 
-		var firstName string
-		var lastName string
-		var userEmail string
-		var userTickets uint
 		// ask user for their name
-
-		fmt.Println("Enter your first name")
-		fmt.Scan(&firstName)
-
-		fmt.Println("Enter your last name")
-		fmt.Scan(&lastName)
-
-		fmt.Println("Enter your email")
-		fmt.Scan(&userEmail)
-
-		fmt.Println("How many tickets you want to book?")
-		fmt.Scan(&userTickets)
-
-		isValidName := len(firstName) >= 2 && len(lastName) >= 2
-		isValidEmail := strings.Contains(userEmail, "@")
-		isValidTicketNumber := userTickets > 0 && userTickets <= remainingTickets
+		firstName, lastName, userEmail, userTickets := getUserInput()
+		isValidName, isValidEmail, isValidTicketNumber := validateUserInput(firstName, lastName, userEmail, userTickets, remainingTickets)
 
 		if isValidName && isValidEmail && isValidTicketNumber {
-			remainingTickets = remainingTickets - userTickets // update remaining tickets
-			bookings = append(bookings, firstName+" "+lastName)
 
-			fmt.Printf("Thank you %v %v for booking %v tickets. You will receive a confirmation email at %v \n", firstName, lastName, userTickets, userEmail)
-			fmt.Printf("Remaining tickets are %v for %v\n", remainingTickets, conferenceName)
-
-			firstNames := []string{}
-			for _, booking := range bookings {
-				var names = strings.Fields(booking)
-				firstNames = append(firstNames, names[0])
-			}
-
-			fmt.Printf("The first names of bookings are: %v\n", firstNames)
+			bookTicket(remainingTickets, userTickets, bookings, firstName, lastName, userEmail, conferenceName)
 
 			if remainingTickets == 0 {
 				// End program
@@ -75,4 +44,60 @@ func main() {
 			}
 		}
 	}
+}
+
+func greetUsers(confName string, confTickets int, remainingTickets uint) {
+	fmt.Printf("Welcome to %v booking application\n", confName)
+	fmt.Printf("We have total of : %v tickets and remaining tickets are: %v\n", confTickets, remainingTickets)
+	fmt.Println("Get your tickets here to attend")
+}
+
+func getFirstNames(bookings []string) []string {
+	firstNames := []string{}
+	for _, booking := range bookings {
+		var names = strings.Fields(booking)
+		firstNames = append(firstNames, names[0])
+
+	}
+	return firstNames
+}
+
+func validateUserInput(firstName string, lastName string, userEmail string, userTickets uint, remainingTickets uint) (bool, bool, bool) {
+	isValidName := len(firstName) >= 2 && len(lastName) >= 2
+	isValidEmail := strings.Contains(userEmail, "@")
+	isValidTicketNumber := userTickets > 0 && userTickets <= remainingTickets
+	return isValidName, isValidEmail, isValidTicketNumber
+}
+
+func getUserInput() (string, string, string, uint) {
+	var firstName string
+	var lastName string
+	var userEmail string
+	var userTickets uint
+
+	fmt.Println("Enter your first name")
+	fmt.Scan(&firstName)
+
+	fmt.Println("Enter your last name")
+	fmt.Scan(&lastName)
+
+	fmt.Println("Enter your email")
+	fmt.Scan(&userEmail)
+
+	fmt.Println("How many tickets you want to book?")
+	fmt.Scan(&userTickets)
+
+	return firstName, lastName, userEmail, userTickets
+}
+
+func bookTicket(remainingTickets uint, userTickets uint, bookings []string, firstName string, lastName string, userEmail string, conferenceName string) {
+	remainingTickets = remainingTickets - userTickets // update remaining tickets
+	bookings = append(bookings, firstName+" "+lastName)
+
+	fmt.Printf("Thank you %v %v for booking %v tickets. You will receive a confirmation email at %v \n", firstName, lastName, userTickets, userEmail)
+	fmt.Printf("Remaining tickets are %v for %v\n", remainingTickets, conferenceName)
+
+	//call function to get first names of bookings
+	firstNames := getFirstNames(bookings)
+	fmt.Println("Bookings so far: ", firstNames)
 }
